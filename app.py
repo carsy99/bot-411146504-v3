@@ -14,11 +14,11 @@ import re
 app = Flask(__name__)
 
 # 必須放上自己的Channel Access Token
-line_bot_api = LineBotApi('QGU5wq+Dv1teu+3jMNAerFywoBd08JJwhZ3/2Gpbglnj60/q/hFMpVjxq0yySVe7xBPgZMwqPV9CEtSAqbofjJWgC9iNfln30YfLzr1XQ47pQBJH2TUsX5CGDT4pZIA2rZkTPUhANDPujZDKoqBYwwdB04t89/1O/w1cDnyilFU=')
+line_bot_api = LineBotApi('dBMC7H/SUd34Lkpn9oZ6qocYQ0clxHAz2kZ8NH+wbHOTwk6AwHZ82GyHmP2CElqTskoBrysRTapSBH5H/vwJkGaxpNUs5+wRs3ZY55SumhitebTEAdUvoLVKPaV74GwRCNVFtdZBRRQz8LPQg+yE0AdB04t89/1O/w1cDnyilFU=')
 # 必須放上自己的Channel Secret
-handler = WebhookHandler('dfe13d92b7d94bcd5ce29a07d85641d1')
+handler = WebhookHandler('6d7fa87c5ab818f1b4932b961b505758')
 
-line_bot_api.push_message('U367c14746ad6c3b1912419dbb5030c44', TextSendMessage(text='你可以開始了'))
+line_bot_api.push_message('Uff01574d2181c7d50c1021ce1eaad953', TextSendMessage(text='你可以開始了'))
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
@@ -44,11 +44,59 @@ def callback():
 def handle_message(event):
     message = text=event.message.text
     if re.match('告訴我秘密',message):
-        audio_message = AudioSendMessage(
-            original_content_url='https://campus-studio.com/download/twsong.mp3',
-            duration=81000
+        carousel_template_message = TemplateSendMessage(
+            alt_text='熱門旅行景點',
+            template=CarouselTemplate(
+                columns=[
+                    CarouselColumn(
+                        thumbnail_image_url='https://i.imgur.com/kNBl363.jpg',
+                        title='台灣',
+                        text='taiwan',
+                        actions=[
+                            MessageAction(
+                                label='熱門景點',
+                                text='台北101、逢甲夜市、墾丁...'
+                            ),
+                            URIAction(
+                                label='馬上查看',
+                                uri='https://en.wikipedia.org/wiki/Taiwan'
+                            )
+                        ]
+                    ),
+                    CarouselColumn(
+                        thumbnail_image_url='https://i.imgur.com/GBPcUEP.png',
+                        title='日本',
+                        text='Japan',
+                        actions=[
+                            MessageAction(
+                                label='熱門景點',
+                                text='金閣寺、淺草寺、北海道...'
+                            ),
+                            URIAction(
+                                label='馬上查看',
+                                uri='https://en.wikipedia.org/wiki/Japan'
+                            )
+                        ]
+                    ),
+                    CarouselColumn(
+                        thumbnail_image_url='https://i.imgur.com/kRW5zTO.png',
+                        title='韓國',
+                        text='Korea',
+                        actions=[
+                            MessageAction(
+                                label='熱門景點',
+                                text='釜山、濟州島、首爾塔...'
+                            ),
+                            URIAction(
+                                label='馬上查看',
+                                uri='https://en.wikipedia.org/wiki/Korea'
+                            )
+                        ]
+                    )
+                ]
+            )
         )
-        line_bot_api.reply_message(event.reply_token, audio_message)
+        line_bot_api.reply_message(event.reply_token, carousel_template_message)
     else:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(message))
 #主程式
